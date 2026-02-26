@@ -3,11 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Peakz Padel Swipe Demo</title>
+  <title>Peakz Padel Singles Swipe Demo</title>
   <style>
     :root{
       --bg:#0b0f14;
-      --card:#111826;
       --text:#e9eef7;
       --muted:#a7b2c7;
       --accent:#27f2c7;
@@ -16,7 +15,6 @@
       --shadow: 0 18px 60px rgba(0,0,0,.45);
       --radius: 22px;
     }
-
     *{box-sizing:border-box}
     body{
       margin:0;
@@ -31,35 +29,43 @@
       justify-content:center;
       padding:16px;
     }
-
     .app{
       width:min(420px, 100%);
       display:flex;
       flex-direction:column;
-      gap:14px;
+      gap:12px;
     }
-
     .topbar{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      padding:8px 6px;
+      padding:8px 6px 0;
+      gap:10px;
     }
-
     .brand{
       display:flex;
       align-items:center;
       gap:10px;
-      font-weight:800;
+      font-weight:950;
       letter-spacing:.2px;
+      min-width: 0;
     }
-
     .dot{
       width:10px;height:10px;border-radius:999px;
       background:var(--accent);
       box-shadow: 0 0 0 6px rgba(39,242,199,.12);
+      flex: 0 0 auto;
     }
-
+    .brandText{
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .rightTop{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
     .pill{
       font-size:12px;
       color:var(--muted);
@@ -68,14 +74,42 @@
       border-radius:999px;
       backdrop-filter: blur(10px);
       background: rgba(17,24,38,.55);
+      white-space:nowrap;
     }
-
+    .miniBtn{
+      font-size:12px;
+      font-weight:950;
+      color:var(--text);
+      border:1px solid rgba(233,238,247,.12);
+      padding:8px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .filters{
+      display:flex;
+      gap:10px;
+      padding: 0 6px;
+    }
+    select{
+      flex:1;
+      appearance:none;
+      border-radius:14px;
+      border:1px solid rgba(233,238,247,.14);
+      background: rgba(17,24,38,.65);
+      color: var(--text);
+      padding:12px 12px;
+      font-weight:900;
+      outline:none;
+      backdrop-filter: blur(10px);
+    }
     .deck{
       position:relative;
-      height: 520px;
+      height: 560px;
       border-radius: var(--radius);
+      margin-top: 4px;
     }
-
     .card{
       position:absolute;
       inset:0;
@@ -88,7 +122,6 @@
       user-select:none;
       transform: translate3d(0,0,0);
     }
-
     .card::before{
       content:"";
       position:absolute;
@@ -98,7 +131,6 @@
         radial-gradient(700px 520px at 0% 40%, rgba(255,77,109,.14), transparent 55%);
       pointer-events:none;
     }
-
     .photo{
       position:absolute;
       inset:0;
@@ -107,13 +139,11 @@
       filter:saturate(1.05) contrast(1.05);
       transform: scale(1.02);
     }
-
     .shade{
       position:absolute;
       inset:0;
-      background: linear-gradient(180deg, rgba(0,0,0,.0) 40%, rgba(0,0,0,.78) 100%);
+      background: linear-gradient(180deg, rgba(0,0,0,.0) 36%, rgba(0,0,0,.84) 100%);
     }
-
     .info{
       position:absolute;
       left:16px;
@@ -123,32 +153,54 @@
       flex-direction:column;
       gap:10px;
     }
-
     .nameRow{
       display:flex;
-      align-items:baseline;
+      align-items:flex-end;
       justify-content:space-between;
       gap:10px;
     }
-
     .name{
       font-size:26px;
-      font-weight:900;
+      font-weight:1000;
       line-height:1.05;
     }
-
     .meta{
       color:var(--muted);
-      font-size:13px;
+      font-size:12px;
       line-height:1.25;
+      text-align:right;
     }
-
+    .statsRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .stat{
+      flex:1;
+      min-width: 96px;
+      padding:10px 12px;
+      border-radius:16px;
+      background: rgba(17,24,38,.62);
+      border:1px solid rgba(233,238,247,.12);
+      backdrop-filter: blur(8px);
+    }
+    .statLabel{
+      color: var(--muted);
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    .statValue{
+      margin-top:4px;
+      font-size:14px;
+      font-weight:1000;
+      letter-spacing:.2px;
+    }
     .tags{
       display:flex;
       flex-wrap:wrap;
       gap:8px;
     }
-
     .tag{
       font-size:12px;
       padding:8px 10px;
@@ -158,13 +210,12 @@
       color: var(--text);
       backdrop-filter: blur(8px);
     }
-
     .badge{
       position:absolute;
       top:18px;
       padding:10px 14px;
       border-radius:14px;
-      font-weight:900;
+      font-weight:1000;
       letter-spacing:.6px;
       font-size:16px;
       text-transform:uppercase;
@@ -174,7 +225,6 @@
       opacity:0;
       pointer-events:none;
     }
-
     .badge.like{ left:18px; color: var(--ok); border-color: rgba(77,255,136,.9); }
     .badge.nope{ right:18px; color: var(--danger); border-color: rgba(255,77,109,.9); transform: rotate(14deg); }
 
@@ -184,7 +234,6 @@
       gap:14px;
       padding: 8px 0 0;
     }
-
     .btn{
       width:64px;height:64px;border-radius:999px;
       border:1px solid rgba(233,238,247,.16);
@@ -194,13 +243,11 @@
       place-items:center;
       color:var(--text);
       font-size:18px;
-      font-weight:900;
+      font-weight:1000;
       cursor:pointer;
       backdrop-filter: blur(10px);
     }
-
     .btn:active{ transform: scale(.98); }
-
     .btn.nope{ outline: 2px solid rgba(255,77,109,.15); }
     .btn.like{ outline: 2px solid rgba(39,242,199,.18); }
 
@@ -210,6 +257,9 @@
       color:var(--muted);
       font-size:12px;
       padding-bottom: 4px;
+      text-align:center;
+      padding-left: 8px;
+      padding-right: 8px;
     }
 
     .modalWrap{
@@ -220,8 +270,8 @@
       justify-content:center;
       background: rgba(0,0,0,.55);
       padding:18px;
+      z-index: 50;
     }
-
     .modal{
       width:min(420px, 100%);
       border-radius: 26px;
@@ -231,26 +281,22 @@
       padding:18px;
       backdrop-filter: blur(14px);
     }
-
     .modal h2{
       margin:0 0 8px;
       font-size:22px;
-      font-weight:950;
+      font-weight:1000;
       letter-spacing:.2px;
     }
-
     .modal p{
       margin:0 0 14px;
       color: var(--muted);
       line-height:1.45;
       font-size:14px;
     }
-
     .modalActions{
       display:flex;
       gap:10px;
     }
-
     .cta{
       flex:1;
       padding:12px 14px;
@@ -258,10 +304,9 @@
       border:1px solid rgba(233,238,247,.16);
       background: rgba(39,242,199,.16);
       color: var(--text);
-      font-weight:900;
+      font-weight:1000;
       cursor:pointer;
     }
-
     .ghost{
       flex:1;
       padding:12px 14px;
@@ -269,7 +314,7 @@
       border:1px solid rgba(233,238,247,.16);
       background: rgba(255,255,255,.04);
       color: var(--text);
-      font-weight:900;
+      font-weight:1000;
       cursor:pointer;
     }
 
@@ -286,6 +331,32 @@
       font-size:12px;
       display:none;
       backdrop-filter: blur(10px);
+      z-index: 60;
+    }
+
+    .formGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top: 10px;
+      margin-bottom: 12px;
+    }
+    .formGrid .full{ grid-column: 1 / -1; }
+    input{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(233,238,247,.14);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-weight:900;
+      outline:none;
+    }
+    .smallNote{
+      color: var(--muted);
+      font-size:12px;
+      line-height:1.35;
+      margin-top: 6px;
     }
   </style>
 </head>
@@ -294,9 +365,27 @@
     <div class="topbar">
       <div class="brand">
         <div class="dot"></div>
-        <div>Peakz Padel Singles</div>
+        <div class="brandText">Peakz Padel Singles</div>
       </div>
-      <div class="pill" id="counter">0 over</div>
+      <div class="rightTop">
+        <button class="miniBtn" id="btnAdd">Speler toevoegen</button>
+        <div class="pill" id="counter">0 over</div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <select id="clubFilter" aria-label="Filter club">
+        <option value="all">Alle clubs</option>
+      </select>
+      <select id="ratingFilter" aria-label="Minimum rating">
+        <option value="0">Alle ratings</option>
+        <option value="4">Min 4</option>
+        <option value="5">Min 5</option>
+        <option value="6">Min 6</option>
+        <option value="7">Min 7</option>
+        <option value="8">Min 8</option>
+        <option value="9">Min 9</option>
+      </select>
     </div>
 
     <div class="deck" id="deck" aria-label="Swipe deck"></div>
@@ -309,13 +398,46 @@
     <div class="footer" id="hint">Swipe rechts voor yes, links voor next</div>
   </div>
 
-  <div class="modalWrap" id="modalWrap" role="dialog" aria-modal="true">
+  <!-- Match modal -->
+  <div class="modalWrap" id="matchWrap" role="dialog" aria-modal="true">
     <div class="modal">
-      <h2 id="modalTitle">Match</h2>
-      <p id="modalText">Jullie willen allebei spelen. Tijd om die Single baan te boeken.</p>
+      <h2 id="matchTitle">Match</h2>
+      <p id="matchText">Tijd om die Single baan te boeken.</p>
       <div class="modalActions">
         <button class="cta" id="btnBook">Boek Single baan</button>
-        <button class="ghost" id="btnClose">Verder swipen</button>
+        <button class="ghost" id="btnMatchClose">Verder swipen</button>
+      </div>
+      <div class="smallNote" id="matchNote"></div>
+    </div>
+  </div>
+
+  <!-- Add player modal -->
+  <div class="modalWrap" id="addWrap" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h2>Speler toevoegen</h2>
+      <p>Deze wordt lokaal opgeslagen in je browser. Perfect voor demo en test.</p>
+
+      <div class="formGrid">
+        <input id="fName" placeholder="Naam" class="full" />
+        <input id="fAge" placeholder="Leeftijd" inputmode="numeric" />
+        <input id="fRating" placeholder="Rating" inputmode="numeric" />
+        <input id="fClub" placeholder="Club" class="full" />
+        <input id="fMatches" placeholder="Potjes gespeeld" inputmode="numeric" />
+        <input id="fAvailability" placeholder="Beschikbaar" />
+        <input id="fStyle" placeholder="Speelstijl" class="full" />
+        <input id="fPhoto" placeholder="Foto url" class="full" />
+      </div>
+
+      <div class="modalActions">
+        <button class="cta" id="btnSavePlayer">Opslaan</button>
+        <button class="ghost" id="btnAddClose">Sluiten</button>
+      </div>
+
+      <div class="smallNote">
+        Tip: geen foto url? Laat leeg, dan pakken we een standaard demo foto.
+      </div>
+      <div class="smallNote">
+        Wil je reset? Open devtools en run localStorage.removeItem("peakz_swipe_custom_profiles")
       </div>
     </div>
   </div>
@@ -323,90 +445,141 @@
   <div class="toast" id="toast"></div>
 
   <script>
+    // Instellingen
+    const mutualLikeBaseChance = 0.40;
+    const maxRatingDiffForMatch = 1;
+
+    // Jouw speler profiel voor match logic
+    // Later kan dit uit login komen, nu is het demo
+    const me = {
+      rating: 6,
+      club: "Amsterdam Zuidoost"
+    };
+
+    // Booking url voorbeeld
+    // Vervang dit later met jullie echte single baan url
+    const bookingBaseUrl = "https://peakzpadel.nl";
+
     // Demo data
-    const profiles = [
-      {
-        id: "p1",
-        name: "Noa",
-        age: 27,
-        club: "Amsterdam Zuidoost",
-        level: "Niveau 6",
-        style: "Netjager",
-        availability: "Avonden",
-        photo: "https://images.unsplash.com/photo-1520975958225-9e5f6fa99c19?auto=format&fit=crop&w=900&q=80"
-      },
-      {
-        id: "p2",
-        name: "Milan",
-        age: 31,
-        club: "Utrecht",
-        level: "Niveau 5",
-        style: "Glasfluisteraar",
-        availability: "Weekend",
-        photo: "https://images.unsplash.com/photo-1520975682031-a76f236b87c8?auto=format&fit=crop&w=900&q=80"
-      },
-      {
-        id: "p3",
-        name: "Sara",
-        age: 24,
-        club: "Eindhoven",
-        level: "Niveau 7",
-        style: "Lob queen",
-        availability: "Ochtend",
-        photo: "https://images.unsplash.com/photo-1520975909019-5d3e9d0e05f9?auto=format&fit=crop&w=900&q=80"
-      },
-      {
-        id: "p4",
-        name: "Jesse",
-        age: 29,
-        club: "Rotterdam",
-        level: "Niveau 6",
-        style: "Smash met beleid",
-        availability: "Middag",
-        photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=80"
-      },
-      {
-        id: "p5",
-        name: "Lina",
-        age: 33,
-        club: "Groningen",
-        level: "Niveau 8",
-        style: "Verdediger",
-        availability: "Avonden",
-        photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
-      }
+    const seedProfiles = [
+      { id:"p1", name:"Noa", age:27, club:"Amsterdam Zuidoost", rating:6, matchesPlayed:84, style:"Netjager", availability:"Avonden",
+        photo:"https://images.unsplash.com/photo-1520975958225-9e5f6fa99c19?auto=format&fit=crop&w=900&q=80" },
+      { id:"p2", name:"Milan", age:31, club:"Utrecht", rating:5, matchesPlayed:142, style:"Glasfluisteraar", availability:"Weekend",
+        photo:"https://images.unsplash.com/photo-1520975682031-a76f236b87c8?auto=format&fit=crop&w=900&q=80" },
+      { id:"p3", name:"Sara", age:24, club:"Eindhoven", rating:7, matchesPlayed:56, style:"Lob queen", availability:"Ochtend",
+        photo:"https://images.unsplash.com/photo-1520975909019-5d3e9d0e05f9?auto=format&fit=crop&w=900&q=80" },
+      { id:"p4", name:"Jesse", age:29, club:"Rotterdam", rating:6, matchesPlayed:210, style:"Smash met beleid", availability:"Middag",
+        photo:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=80" },
+      { id:"p5", name:"Lina", age:33, club:"Groningen", rating:8, matchesPlayed:118, style:"Verdediger", availability:"Avonden",
+        photo:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" },
+      { id:"p6", name:"Bram", age:26, club:"Amsterdam Zuidoost", rating:9, matchesPlayed:320, style:"Sloopkogel", availability:"Weekend",
+        photo:"https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=900&q=80" }
     ];
 
-    // Fake mutual like odds for demo
-    const mutualLikeChance = 0.35;
+    const storageKey = "peakz_swipe_custom_profiles";
+
+    function loadCustomProfiles(){
+      try{
+        const raw = localStorage.getItem(storageKey);
+        if(!raw) return [];
+        const parsed = JSON.parse(raw);
+        if(!Array.isArray(parsed)) return [];
+        return parsed;
+      }catch{
+        return [];
+      }
+    }
+
+    function saveCustomProfiles(list){
+      localStorage.setItem(storageKey, JSON.stringify(list));
+    }
+
+    function uid(){
+      return "c" + Math.random().toString(16).slice(2) + Date.now().toString(16);
+    }
 
     const deck = document.getElementById("deck");
     const counter = document.getElementById("counter");
     const btnLike = document.getElementById("btnLike");
     const btnNope = document.getElementById("btnNope");
     const hint = document.getElementById("hint");
-
-    const modalWrap = document.getElementById("modalWrap");
-    const btnClose = document.getElementById("btnClose");
-    const btnBook = document.getElementById("btnBook");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalText = document.getElementById("modalText");
-
     const toast = document.getElementById("toast");
 
+    const clubFilter = document.getElementById("clubFilter");
+    const ratingFilter = document.getElementById("ratingFilter");
+
+    const matchWrap = document.getElementById("matchWrap");
+    const btnMatchClose = document.getElementById("btnMatchClose");
+    const btnBook = document.getElementById("btnBook");
+    const matchTitle = document.getElementById("matchTitle");
+    const matchText = document.getElementById("matchText");
+    const matchNote = document.getElementById("matchNote");
+
+    const addWrap = document.getElementById("addWrap");
+    const btnAdd = document.getElementById("btnAdd");
+    const btnAddClose = document.getElementById("btnAddClose");
+    const btnSavePlayer = document.getElementById("btnSavePlayer");
+
+    const fName = document.getElementById("fName");
+    const fAge = document.getElementById("fAge");
+    const fRating = document.getElementById("fRating");
+    const fClub = document.getElementById("fClub");
+    const fMatches = document.getElementById("fMatches");
+    const fAvailability = document.getElementById("fAvailability");
+    const fStyle = document.getElementById("fStyle");
+    const fPhoto = document.getElementById("fPhoto");
+
+    let allProfiles = [];
+    let profiles = [];
     let index = 0;
     let currentCard = null;
 
-    function setCounter(){
-      const left = Math.max(0, profiles.length - index);
-      counter.textContent = left + " over";
-    }
+    function uniq(arr){ return [...new Set(arr)]; }
 
     function showToast(text){
       toast.textContent = text;
       toast.style.display = "block";
       clearTimeout(showToast._t);
       showToast._t = setTimeout(() => toast.style.display = "none", 1400);
+    }
+
+    function setCounter(){
+      const left = Math.max(0, profiles.length - index);
+      counter.textContent = left + " over";
+    }
+
+    function rebuildAllProfiles(){
+      const custom = loadCustomProfiles();
+      allProfiles = [...seedProfiles, ...custom];
+    }
+
+    function setupFilters(){
+      clubFilter.innerHTML = '<option value="all">Alle clubs</option>';
+      const clubs = uniq(allProfiles.map(p => p.club)).sort();
+      for(const c of clubs){
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        clubFilter.appendChild(opt);
+      }
+    }
+
+    function applyFilters(){
+      const clubValue = clubFilter.value;
+      const minRating = Number(ratingFilter.value);
+
+      profiles = allProfiles.filter(p => {
+        const okClub = clubValue === "all" ? true : p.club === clubValue;
+        const okRating = Number(p.rating) >= minRating;
+        return okClub && okRating;
+      });
+
+      index = 0;
+      mountNextCard();
+
+      if(profiles.length === 0){
+        hint.textContent = "Geen spelers gevonden. Zet je filters iets losser.";
+      }
     }
 
     function createCard(profile){
@@ -416,7 +589,7 @@
 
       const photo = document.createElement("div");
       photo.className = "photo";
-      photo.style.backgroundImage = `url("${profile.photo}")`;
+      photo.style.backgroundImage = `url("${profile.photo || "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"}")`;
 
       const shade = document.createElement("div");
       shade.className = "shade";
@@ -441,10 +614,29 @@
 
       const meta = document.createElement("div");
       meta.className = "meta";
-      meta.textContent = `${profile.club} • ${profile.level}`;
+      meta.textContent = `${profile.club}`;
 
       nameRow.appendChild(name);
       nameRow.appendChild(meta);
+
+      const statsRow = document.createElement("div");
+      statsRow.className = "statsRow";
+
+      const s1 = document.createElement("div");
+      s1.className = "stat";
+      s1.innerHTML = `<div class="statLabel">Rating</div><div class="statValue">${profile.rating}</div>`;
+
+      const s2 = document.createElement("div");
+      s2.className = "stat";
+      s2.innerHTML = `<div class="statLabel">Potjes</div><div class="statValue">${profile.matchesPlayed}</div>`;
+
+      const s3 = document.createElement("div");
+      s3.className = "stat";
+      s3.innerHTML = `<div class="statLabel">Beschikbaar</div><div class="statValue">${profile.availability}</div>`;
+
+      statsRow.appendChild(s1);
+      statsRow.appendChild(s2);
+      statsRow.appendChild(s3);
 
       const tags = document.createElement("div");
       tags.className = "tags";
@@ -455,17 +647,13 @@
 
       const t2 = document.createElement("div");
       t2.className = "tag";
-      t2.textContent = profile.availability;
-
-      const t3 = document.createElement("div");
-      t3.className = "tag";
-      t3.textContent = "Single baan ready";
+      t2.textContent = "Single baan ready";
 
       tags.appendChild(t1);
       tags.appendChild(t2);
-      tags.appendChild(t3);
 
       info.appendChild(nameRow);
+      info.appendChild(statsRow);
       info.appendChild(tags);
 
       card.appendChild(photo);
@@ -482,9 +670,9 @@
     function mountNextCard(){
       deck.innerHTML = "";
       if(index >= profiles.length){
-        hint.textContent = "Geen profielen meer. Reset en ga weer los.";
-        showToast("Deck leeg");
+        hint.textContent = "Deck leeg. Pas filters aan of voeg spelers toe.";
         setCounter();
+        currentCard = null;
         return;
       }
       const profile = profiles[index];
@@ -494,39 +682,57 @@
       hint.textContent = "Swipe rechts voor yes, links voor next";
     }
 
+    function ratingDiffOk(profile){
+      return Math.abs(Number(profile.rating) - Number(me.rating)) <= maxRatingDiffForMatch;
+    }
+
+    function matchChance(profile){
+      // Bonus als club gelijk is
+      const sameClubBonus = profile.club === me.club ? 0.12 : 0;
+      // Geen match als rating verschil te groot is
+      if(!ratingDiffOk(profile)) return 0;
+      return Math.min(0.85, mutualLikeBaseChance + sameClubBonus);
+    }
+
+    function bookingUrlFor(profile){
+      // Simpele url params voor demo
+      const u = new URL(bookingBaseUrl);
+      u.searchParams.set("single", "1");
+      u.searchParams.set("club", profile.club);
+      u.searchParams.set("opponent", profile.name);
+      u.searchParams.set("rating", String(profile.rating));
+      return u.toString();
+    }
+
     function openMatch(profile){
-      modalTitle.textContent = "Match";
-      modalText.textContent = `Jij en ${profile.name} zitten op dezelfde vibe. Boek die Single baan en maak er een pot van.`;
-      modalWrap.style.display = "flex";
+      matchTitle.textContent = "Match";
+      matchText.textContent = `Jij en ${profile.name} willen allebei spelen. Tijd om die Single baan te boeken.`;
+      matchNote.textContent = `Match regel: rating verschil maximaal ${maxRatingDiffForMatch}. Jouw rating ${me.rating}.`;
+
+      matchWrap.style.display = "flex";
 
       btnBook.onclick = () => {
-        // Replace this with your real booking link or app deeplink
-        const bookingUrl = "https://peakzpadel.nl";
-        window.location.href = bookingUrl;
+        window.location.href = bookingUrlFor(profile);
       };
     }
 
-    function closeMatch(){
-      modalWrap.style.display = "none";
-    }
+    function closeMatch(){ matchWrap.style.display = "none"; }
 
-    btnClose.addEventListener("click", closeMatch);
-    modalWrap.addEventListener("click", (e) => {
-      if(e.target === modalWrap) closeMatch();
-    });
+    btnMatchClose.addEventListener("click", closeMatch);
+    matchWrap.addEventListener("click", (e) => { if(e.target === matchWrap) closeMatch(); });
 
     function onDecision(direction, profile){
       const liked = direction === "like";
+      showToast(liked ? "Yes" : "Next");
 
-      // Demo effect
+      let isMatch = false;
       if(liked){
-        showToast("Yes");
-      } else {
-        showToast("Next");
+        const chance = matchChance(profile);
+        isMatch = Math.random() < chance;
+        if(chance === 0){
+          showToast("Te groot rating verschil");
+        }
       }
-
-      // Fake match
-      const isMatch = liked && Math.random() < mutualLikeChance;
 
       index += 1;
       mountNextCard();
@@ -539,9 +745,7 @@
     function animateOut(card, x, rot){
       card.style.transition = "transform 240ms ease";
       card.style.transform = `translate3d(${x}px, 0, 0) rotate(${rot}deg)`;
-      setTimeout(() => {
-        card.style.transition = "";
-      }, 260);
+      setTimeout(() => { card.style.transition = ""; }, 260);
     }
 
     function attachSwipe(card, badgeLike, badgeNope, profile){
@@ -550,7 +754,6 @@
       let currentX = 0;
       let currentY = 0;
       let dragging = false;
-
       const threshold = 110;
 
       function setBadges(dx){
@@ -612,7 +815,6 @@
       window.addEventListener("mousemove", pointerMove);
       window.addEventListener("mouseup", pointerUp);
 
-      // Buttons
       btnLike.onclick = () => {
         if(!currentCard) return;
         badgeLike.style.opacity = "1";
@@ -628,9 +830,70 @@
       };
     }
 
-    // Start
-    setCounter();
-    mountNextCard();
+    function openAdd(){ addWrap.style.display = "flex"; }
+    function closeAdd(){ addWrap.style.display = "none"; }
+
+    btnAdd.addEventListener("click", openAdd);
+    btnAddClose.addEventListener("click", closeAdd);
+    addWrap.addEventListener("click", (e) => { if(e.target === addWrap) closeAdd(); });
+
+    btnSavePlayer.addEventListener("click", () => {
+      const name = (fName.value || "").trim();
+      const club = (fClub.value || "").trim();
+      const style = (fStyle.value || "").trim() || "Allround";
+      const availability = (fAvailability.value || "").trim() || "Avonden";
+      const photo = (fPhoto.value || "").trim();
+
+      const age = Number((fAge.value || "").trim());
+      const rating = Number((fRating.value || "").trim());
+      const matchesPlayed = Number((fMatches.value || "").trim());
+
+      if(!name || !club || !Number.isFinite(age) || !Number.isFinite(rating) || !Number.isFinite(matchesPlayed)){
+        showToast("Vul naam club leeftijd rating potjes in");
+        return;
+      }
+
+      const newProfile = {
+        id: uid(),
+        name,
+        age,
+        club,
+        rating,
+        matchesPlayed,
+        style,
+        availability,
+        photo
+      };
+
+      const custom = loadCustomProfiles();
+      custom.push(newProfile);
+      saveCustomProfiles(custom);
+
+      // Reset velden
+      fName.value = "";
+      fAge.value = "";
+      fRating.value = "";
+      fClub.value = "";
+      fMatches.value = "";
+      fAvailability.value = "";
+      fStyle.value = "";
+      fPhoto.value = "";
+
+      rebuildAllProfiles();
+      setupFilters();
+      applyFilters();
+      closeAdd();
+      showToast("Speler toegevoegd");
+    });
+
+    // Init
+    rebuildAllProfiles();
+    setupFilters();
+
+    clubFilter.addEventListener("change", applyFilters);
+    ratingFilter.addEventListener("change", applyFilters);
+
+    applyFilters();
   </script>
 </body>
 </html>
