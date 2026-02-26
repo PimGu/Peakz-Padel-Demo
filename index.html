@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Peakz Padel Swipe Demo</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#111826;
+      --text:#e9eef7;
+      --muted:#a7b2c7;
+      --accent:#27f2c7;
+      --danger:#ff4d6d;
+      --ok:#4dff88;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius: 22px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(1200px 800px at 50% -10%, rgba(39,242,199,.18), transparent 55%),
+                  radial-gradient(900px 700px at 110% 10%, rgba(255,77,109,.14), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100dvh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+    }
+
+    .app{
+      width:min(420px, 100%);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:8px 6px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+
+    .dot{
+      width:10px;height:10px;border-radius:999px;
+      background:var(--accent);
+      box-shadow: 0 0 0 6px rgba(39,242,199,.12);
+    }
+
+    .pill{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid rgba(233,238,247,.12);
+      padding:8px 10px;
+      border-radius:999px;
+      backdrop-filter: blur(10px);
+      background: rgba(17,24,38,.55);
+    }
+
+    .deck{
+      position:relative;
+      height: 520px;
+      border-radius: var(--radius);
+    }
+
+    .card{
+      position:absolute;
+      inset:0;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(233,238,247,.12);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      touch-action:none;
+      user-select:none;
+      transform: translate3d(0,0,0);
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(900px 520px at 50% 0%, rgba(39,242,199,.20), transparent 55%),
+        radial-gradient(700px 520px at 0% 40%, rgba(255,77,109,.14), transparent 55%);
+      pointer-events:none;
+    }
+
+    .photo{
+      position:absolute;
+      inset:0;
+      background-size:cover;
+      background-position:center;
+      filter:saturate(1.05) contrast(1.05);
+      transform: scale(1.02);
+    }
+
+    .shade{
+      position:absolute;
+      inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,.0) 40%, rgba(0,0,0,.78) 100%);
+    }
+
+    .info{
+      position:absolute;
+      left:16px;
+      right:16px;
+      bottom:16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .nameRow{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .name{
+      font-size:26px;
+      font-weight:900;
+      line-height:1.05;
+    }
+
+    .meta{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.25;
+    }
+
+    .tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .tag{
+      font-size:12px;
+      padding:8px 10px;
+      border-radius:999px;
+      background: rgba(17,24,38,.65);
+      border:1px solid rgba(233,238,247,.12);
+      color: var(--text);
+      backdrop-filter: blur(8px);
+    }
+
+    .badge{
+      position:absolute;
+      top:18px;
+      padding:10px 14px;
+      border-radius:14px;
+      font-weight:900;
+      letter-spacing:.6px;
+      font-size:16px;
+      text-transform:uppercase;
+      border:2px solid rgba(255,255,255,.6);
+      background: rgba(0,0,0,.25);
+      transform: rotate(-14deg);
+      opacity:0;
+      pointer-events:none;
+    }
+
+    .badge.like{ left:18px; color: var(--ok); border-color: rgba(77,255,136,.9); }
+    .badge.nope{ right:18px; color: var(--danger); border-color: rgba(255,77,109,.9); transform: rotate(14deg); }
+
+    .controls{
+      display:flex;
+      justify-content:center;
+      gap:14px;
+      padding: 8px 0 0;
+    }
+
+    .btn{
+      width:64px;height:64px;border-radius:999px;
+      border:1px solid rgba(233,238,247,.16);
+      background: rgba(17,24,38,.65);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      display:grid;
+      place-items:center;
+      color:var(--text);
+      font-size:18px;
+      font-weight:900;
+      cursor:pointer;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn:active{ transform: scale(.98); }
+
+    .btn.nope{ outline: 2px solid rgba(255,77,109,.15); }
+    .btn.like{ outline: 2px solid rgba(39,242,199,.18); }
+
+    .footer{
+      display:flex;
+      justify-content:center;
+      color:var(--muted);
+      font-size:12px;
+      padding-bottom: 4px;
+    }
+
+    .modalWrap{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background: rgba(0,0,0,.55);
+      padding:18px;
+    }
+
+    .modal{
+      width:min(420px, 100%);
+      border-radius: 26px;
+      background: rgba(17,24,38,.92);
+      border:1px solid rgba(233,238,247,.14);
+      box-shadow: var(--shadow);
+      padding:18px;
+      backdrop-filter: blur(14px);
+    }
+
+    .modal h2{
+      margin:0 0 8px;
+      font-size:22px;
+      font-weight:950;
+      letter-spacing:.2px;
+    }
+
+    .modal p{
+      margin:0 0 14px;
+      color: var(--muted);
+      line-height:1.45;
+      font-size:14px;
+    }
+
+    .modalActions{
+      display:flex;
+      gap:10px;
+    }
+
+    .cta{
+      flex:1;
+      padding:12px 14px;
+      border-radius: 14px;
+      border:1px solid rgba(233,238,247,.16);
+      background: rgba(39,242,199,.16);
+      color: var(--text);
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    .ghost{
+      flex:1;
+      padding:12px 14px;
+      border-radius: 14px;
+      border:1px solid rgba(233,238,247,.16);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      transform: translateX(-50%);
+      bottom:16px;
+      padding:10px 12px;
+      border-radius: 999px;
+      background: rgba(17,24,38,.88);
+      border:1px solid rgba(233,238,247,.14);
+      color: var(--muted);
+      font-size:12px;
+      display:none;
+      backdrop-filter: blur(10px);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="dot"></div>
+        <div>Peakz Padel Singles</div>
+      </div>
+      <div class="pill" id="counter">0 over</div>
+    </div>
+
+    <div class="deck" id="deck" aria-label="Swipe deck"></div>
+
+    <div class="controls">
+      <button class="btn nope" id="btnNope" aria-label="Nope">✕</button>
+      <button class="btn like" id="btnLike" aria-label="Like">❤</button>
+    </div>
+
+    <div class="footer" id="hint">Swipe rechts voor yes, links voor next</div>
+  </div>
+
+  <div class="modalWrap" id="modalWrap" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h2 id="modalTitle">Match</h2>
+      <p id="modalText">Jullie willen allebei spelen. Tijd om die Single baan te boeken.</p>
+      <div class="modalActions">
+        <button class="cta" id="btnBook">Boek Single baan</button>
+        <button class="ghost" id="btnClose">Verder swipen</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Demo data
+    const profiles = [
+      {
+        id: "p1",
+        name: "Noa",
+        age: 27,
+        club: "Amsterdam Zuidoost",
+        level: "Niveau 6",
+        style: "Netjager",
+        availability: "Avonden",
+        photo: "https://images.unsplash.com/photo-1520975958225-9e5f6fa99c19?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        id: "p2",
+        name: "Milan",
+        age: 31,
+        club: "Utrecht",
+        level: "Niveau 5",
+        style: "Glasfluisteraar",
+        availability: "Weekend",
+        photo: "https://images.unsplash.com/photo-1520975682031-a76f236b87c8?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        id: "p3",
+        name: "Sara",
+        age: 24,
+        club: "Eindhoven",
+        level: "Niveau 7",
+        style: "Lob queen",
+        availability: "Ochtend",
+        photo: "https://images.unsplash.com/photo-1520975909019-5d3e9d0e05f9?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        id: "p4",
+        name: "Jesse",
+        age: 29,
+        club: "Rotterdam",
+        level: "Niveau 6",
+        style: "Smash met beleid",
+        availability: "Middag",
+        photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=80"
+      },
+      {
+        id: "p5",
+        name: "Lina",
+        age: 33,
+        club: "Groningen",
+        level: "Niveau 8",
+        style: "Verdediger",
+        availability: "Avonden",
+        photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
+      }
+    ];
+
+    // Fake mutual like odds for demo
+    const mutualLikeChance = 0.35;
+
+    const deck = document.getElementById("deck");
+    const counter = document.getElementById("counter");
+    const btnLike = document.getElementById("btnLike");
+    const btnNope = document.getElementById("btnNope");
+    const hint = document.getElementById("hint");
+
+    const modalWrap = document.getElementById("modalWrap");
+    const btnClose = document.getElementById("btnClose");
+    const btnBook = document.getElementById("btnBook");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalText = document.getElementById("modalText");
+
+    const toast = document.getElementById("toast");
+
+    let index = 0;
+    let currentCard = null;
+
+    function setCounter(){
+      const left = Math.max(0, profiles.length - index);
+      counter.textContent = left + " over";
+    }
+
+    function showToast(text){
+      toast.textContent = text;
+      toast.style.display = "block";
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => toast.style.display = "none", 1400);
+    }
+
+    function createCard(profile){
+      const card = document.createElement("div");
+      card.className = "card";
+      card.dataset.id = profile.id;
+
+      const photo = document.createElement("div");
+      photo.className = "photo";
+      photo.style.backgroundImage = `url("${profile.photo}")`;
+
+      const shade = document.createElement("div");
+      shade.className = "shade";
+
+      const badgeLike = document.createElement("div");
+      badgeLike.className = "badge like";
+      badgeLike.textContent = "YES";
+
+      const badgeNope = document.createElement("div");
+      badgeNope.className = "badge nope";
+      badgeNope.textContent = "NEXT";
+
+      const info = document.createElement("div");
+      info.className = "info";
+
+      const nameRow = document.createElement("div");
+      nameRow.className = "nameRow";
+
+      const name = document.createElement("div");
+      name.className = "name";
+      name.textContent = `${profile.name}, ${profile.age}`;
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = `${profile.club} • ${profile.level}`;
+
+      nameRow.appendChild(name);
+      nameRow.appendChild(meta);
+
+      const tags = document.createElement("div");
+      tags.className = "tags";
+
+      const t1 = document.createElement("div");
+      t1.className = "tag";
+      t1.textContent = profile.style;
+
+      const t2 = document.createElement("div");
+      t2.className = "tag";
+      t2.textContent = profile.availability;
+
+      const t3 = document.createElement("div");
+      t3.className = "tag";
+      t3.textContent = "Single baan ready";
+
+      tags.appendChild(t1);
+      tags.appendChild(t2);
+      tags.appendChild(t3);
+
+      info.appendChild(nameRow);
+      info.appendChild(tags);
+
+      card.appendChild(photo);
+      card.appendChild(shade);
+      card.appendChild(badgeLike);
+      card.appendChild(badgeNope);
+      card.appendChild(info);
+
+      attachSwipe(card, badgeLike, badgeNope, profile);
+
+      return card;
+    }
+
+    function mountNextCard(){
+      deck.innerHTML = "";
+      if(index >= profiles.length){
+        hint.textContent = "Geen profielen meer. Reset en ga weer los.";
+        showToast("Deck leeg");
+        setCounter();
+        return;
+      }
+      const profile = profiles[index];
+      currentCard = createCard(profile);
+      deck.appendChild(currentCard);
+      setCounter();
+      hint.textContent = "Swipe rechts voor yes, links voor next";
+    }
+
+    function openMatch(profile){
+      modalTitle.textContent = "Match";
+      modalText.textContent = `Jij en ${profile.name} zitten op dezelfde vibe. Boek die Single baan en maak er een pot van.`;
+      modalWrap.style.display = "flex";
+
+      btnBook.onclick = () => {
+        // Replace this with your real booking link or app deeplink
+        const bookingUrl = "https://peakzpadel.nl";
+        window.location.href = bookingUrl;
+      };
+    }
+
+    function closeMatch(){
+      modalWrap.style.display = "none";
+    }
+
+    btnClose.addEventListener("click", closeMatch);
+    modalWrap.addEventListener("click", (e) => {
+      if(e.target === modalWrap) closeMatch();
+    });
+
+    function onDecision(direction, profile){
+      const liked = direction === "like";
+
+      // Demo effect
+      if(liked){
+        showToast("Yes");
+      } else {
+        showToast("Next");
+      }
+
+      // Fake match
+      const isMatch = liked && Math.random() < mutualLikeChance;
+
+      index += 1;
+      mountNextCard();
+
+      if(isMatch){
+        openMatch(profile);
+      }
+    }
+
+    function animateOut(card, x, rot){
+      card.style.transition = "transform 240ms ease";
+      card.style.transform = `translate3d(${x}px, 0, 0) rotate(${rot}deg)`;
+      setTimeout(() => {
+        card.style.transition = "";
+      }, 260);
+    }
+
+    function attachSwipe(card, badgeLike, badgeNope, profile){
+      let startX = 0;
+      let startY = 0;
+      let currentX = 0;
+      let currentY = 0;
+      let dragging = false;
+
+      const threshold = 110;
+
+      function setBadges(dx){
+        const likeOpacity = Math.max(0, Math.min(1, dx / 140));
+        const nopeOpacity = Math.max(0, Math.min(1, (-dx) / 140));
+        badgeLike.style.opacity = likeOpacity.toFixed(2);
+        badgeNope.style.opacity = nopeOpacity.toFixed(2);
+      }
+
+      function pointerDown(e){
+        dragging = true;
+        const p = e.touches ? e.touches[0] : e;
+        startX = p.clientX;
+        startY = p.clientY;
+        currentX = 0;
+        currentY = 0;
+        card.style.transition = "";
+      }
+
+      function pointerMove(e){
+        if(!dragging) return;
+        const p = e.touches ? e.touches[0] : e;
+        currentX = p.clientX - startX;
+        currentY = p.clientY - startY;
+
+        const rot = currentX / 18;
+        card.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${rot}deg)`;
+        setBadges(currentX);
+      }
+
+      function pointerUp(){
+        if(!dragging) return;
+        dragging = false;
+
+        if(currentX > threshold){
+          setBadges(200);
+          animateOut(card, 520, 18);
+          onDecision("like", profile);
+          return;
+        }
+
+        if(currentX < -threshold){
+          setBadges(-200);
+          animateOut(card, -520, -18);
+          onDecision("nope", profile);
+          return;
+        }
+
+        badgeLike.style.opacity = "0";
+        badgeNope.style.opacity = "0";
+        card.style.transition = "transform 220ms ease";
+        card.style.transform = "translate3d(0,0,0) rotate(0deg)";
+      }
+
+      card.addEventListener("touchstart", pointerDown, {passive:true});
+      card.addEventListener("touchmove", pointerMove, {passive:true});
+      card.addEventListener("touchend", pointerUp);
+      card.addEventListener("mousedown", pointerDown);
+      window.addEventListener("mousemove", pointerMove);
+      window.addEventListener("mouseup", pointerUp);
+
+      // Buttons
+      btnLike.onclick = () => {
+        if(!currentCard) return;
+        badgeLike.style.opacity = "1";
+        animateOut(card, 520, 18);
+        onDecision("like", profile);
+      };
+
+      btnNope.onclick = () => {
+        if(!currentCard) return;
+        badgeNope.style.opacity = "1";
+        animateOut(card, -520, -18);
+        onDecision("nope", profile);
+      };
+    }
+
+    // Start
+    setCounter();
+    mountNextCard();
+  </script>
+</body>
+</html>
